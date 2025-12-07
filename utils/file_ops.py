@@ -5,9 +5,8 @@ def read_file(path: str) -> bytes:
         return f.read()
 
 def write_encrypted_file(path: str, salt: bytes, iv: bytes, ciphertext: bytes, tag: bytes):
-    """
-    Write encrypted file format: [SALT_LEN][SALT][IV_LEN][IV][CIPHERTEXT][TAG]
-    """
+
+    #Write encrypted file format: [SALT_LEN][SALT][IV_LEN][IV][CIPHERTEXT][TAG]
     with open(path, "wb") as f:
         f.write(len(salt).to_bytes(1, 'big'))
         f.write(salt)
@@ -17,6 +16,8 @@ def write_encrypted_file(path: str, salt: bytes, iv: bytes, ciphertext: bytes, t
         f.write(tag)
 
 def read_encrypted_file(path: str) -> dict:
+
+    #Read encrypted file and extract salt, iv, ciphertext, and tag
     with open(path, "rb") as f:
         salt_len = int.from_bytes(f.read(1), 'big')
         salt = f.read(salt_len)
@@ -28,4 +29,6 @@ def read_encrypted_file(path: str) -> dict:
     return {"salt": salt, "iv": iv, "ciphertext": ciphertext, "tag": tag}
 
 def file_exists(path: str) -> bool:
+
+    #Check if file exists at given path
     return os.path.isfile(path)
