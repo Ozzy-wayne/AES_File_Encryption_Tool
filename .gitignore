@@ -1,0 +1,19 @@
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Python virtual environments
+.venv/
+env/
+venv/
+
+# Encrypted and decrypted outputs
+encrypted_files/
+decrypted_files/
+
+# Pytest cache
+.pytest_cache/
+
+# Optional OS files
+.DS_Store
+Thumbs.db
