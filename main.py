@@ -93,30 +93,41 @@ def select_menu_option():
     return "3"
 
 def encrypt_file(input_path: str, output_path: str):
+
+    # Check if input file exists
     if not file_exists(input_path):
         print("Input file does not exist!\n")
         return
 
+    # Get and confirm password from user 
     password = get_password(confirm=True)
     if not password:
         return
     
     data = read_file(input_path)
     salt = get_random_bytes(config.SALT_LENGTH)
+
+    # Derive a 256-bit AES key from the password and salt using PBKDF2-HMAC-SHA256
     key = derive_key(password, salt)
     enc = encrypt_bytes(data, key)
-
+    
+    # Write the encrypted data to output file along with salt, iv, and tag
     write_encrypted_file(output_path, salt, enc["iv"], enc["ciphertext"], enc["tag"])
     print(f"\nEncryption successful! Saved to {output_path}\n")
 
 def decrypt_file(input_path: str, output_path: str):
+
+    # Check if input file exists 
     if not file_exists(input_path):
         print("Input file does not exist!\n")
         return
 
     attempts = 0
+
+    # Read encrypted data from file
     enc_data = read_encrypted_file(input_path)
 
+    # Try to get correct password and decrypt
     while attempts < MAX_ATTEMPTS:
         password = getpass.getpass(f"Enter password (attempt {attempts+1}/{MAX_ATTEMPTS}): ")
         if not password:
@@ -124,6 +135,7 @@ def decrypt_file(input_path: str, output_path: str):
             attempts += 1
             continue
 
+        # Derive key and attempt decryption 
         key = derive_key(password, enc_data["salt"])
         try:
             decrypted = decrypt_bytes(enc_data["ciphertext"], key, enc_data["iv"], enc_data["tag"])
@@ -141,27 +153,41 @@ def main_menu():
     while True:
         choice = select_menu_option()
         if choice == "1":
+
+            # List available files to encrypt in sample_files directory
             files = [f for f in os.listdir(SAMPLE_DIR) if os.path.isfile(os.path.join(SAMPLE_DIR, f))]
             if not files:
                 print("No files available to encrypt.\n")
                 continue
             print("\nAvailable files:")
+
+            # Let user select a file to encrypt
             file_name = select_file_from_list(files, SAMPLE_DIR)
+
+            # If no valid file selected, continue
             if not file_name:
                 continue
+
+            # Encrypt the selected file and save to encrypted_files directory
             input_path = os.path.join(SAMPLE_DIR, file_name)
             output_path = os.path.join(ENCRYPTED_DIR, file_name + ".enc")
             encrypt_file(input_path, output_path)
 
         elif choice == "2":
+
+            # List available files to decrypt in encrypted_files directory
             files = [f for f in os.listdir(ENCRYPTED_DIR) if os.path.isfile(os.path.join(ENCRYPTED_DIR, f))]
             if not files:
                 print("No files available to decrypt.\n")
                 continue
             print("\nAvailable files:")
+
+            # Let user select a file to decrypt
             file_name = select_file_from_list(files, ENCRYPTED_DIR)
             if not file_name:
                 continue
+
+            # Decrypt the selected file and save to decrypted_files directory
             input_path = os.path.join(ENCRYPTED_DIR, file_name)
             output_file_name = file_name[:-4] if file_name.lower().endswith(".enc") else file_name
             output_path = os.path.join(DECRYPTED_DIR, output_file_name)
