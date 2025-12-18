@@ -24,7 +24,7 @@ MAX_ATTEMPTS = 3
 def get_password(confirm=False):
     attempts = 0
     while attempts < MAX_ATTEMPTS:
-        password = getpass.getpass(f"Enter password (attempt {attempts+1}/{MAX_ATTEMPTS}): ")
+        password = getpass.getpass(f"\nEnter password (attempt {attempts+1}/{MAX_ATTEMPTS}): ")
 
         # Check for empty password
         if not password:
@@ -60,7 +60,7 @@ def select_file_from_list(files, folder):
             size = os.path.getsize(path)
             print(f"{i}. {f} ({size} bytes)")
         try:
-            choice = int(input(f"Select a file by number (attempt {attempts+1}/{MAX_ATTEMPTS}): "))
+            choice = int(input(f"\nSelect a file by number (attempt {attempts+1}/{MAX_ATTEMPTS}): "))
             if 1 <= choice <= len(files):
                 return files[choice - 1]
             else:
@@ -68,7 +68,7 @@ def select_file_from_list(files, folder):
         except ValueError:
             print("\nInvalid input. Enter a number.\n")
         attempts += 1
-        print("Available files:\n")
+        print("Available files: \n")
     print("Maximum attempts reached.\n")
     return None
 
@@ -159,7 +159,7 @@ def main_menu():
             if not files:
                 print("No files available to encrypt.\n")
                 continue
-            print("\nAvailable files:")
+            print("\nAvailable files: ")
 
             # Let user select a file to encrypt
             file_name = select_file_from_list(files, SAMPLE_DIR)
@@ -194,7 +194,7 @@ def main_menu():
             decrypt_file(input_path, output_path)
 
         elif choice == "3":
-            print("Thank You for Using AES-256 FILE ENCRYPTION TOOL!")
+            print("\nThank You for Using AES-256 FILE ENCRYPTION TOOL!")
             break
 
 if __name__ == "__main__":
